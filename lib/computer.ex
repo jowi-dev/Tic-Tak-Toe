@@ -5,7 +5,7 @@ defmodule Computer do
     board_state
     |> try_win(team)
     |> block_player_win(board_state, player_team)
-    |> first_move(board_state, team)
+    |> first_move(board_state)
     |> furthest_distance_move(board_state, team)
     |> closest_intersection_move(board_state, team)
   end
@@ -96,32 +96,29 @@ defmodule Computer do
 
   end
 
-  def invert_board(board_state) do
-    board_state
-    |> Map.to_list()
-    |> Enum.filter(fn {_, row} -> is_list(row) end)
-    |> Enum.reduce(%{}, fn {_index, row}, acc ->
-      [head | tail] = row
-      acc = Map.put(acc, "0", Map.get(acc, "0", []) ++ [head])
-      [head | tail] = tail
-      acc = Map.put(acc, "1", Map.get(acc,"1", []) ++ [head])
-      [head | []] = tail
-
-      Map.put(acc, "2", Map.get(acc,"2", []) ++ [head])
-   end)
-  end
-
-  defp block_player_win(nil, board_state, player_team) do
+  def block_player_win(nil, board_state, player_team) do
     try_win(board_state, player_team)
   end
 
-  defp block_player_win(curr_move, _, _), do: curr_move
+  def block_player_win(curr_move, _, _), do: curr_move
 
-  defp first_move(nil, board_state, team) do
+  def first_move(nil, board_state) do
+    board_state
+    |> make_board_enumerable()
+    |> Enum.find(fn {_index, row} -> Enum.any?(row, &(is_nil(&1))) end)
+    |> (&({String.to_integer(elem(&1,0)), Enum.find_index(elem(&1,1), fn item -> is_nil(item) end)})).()
 
   end
 
-  defp first_move(curr_move, _, _), do: curr_move
+  def first_move(curr_move, _), do: curr_move
+
+  defp make_board_enumerable(board_state),
+    do:
+      board_state
+      |> Map.to_list()
+      |> Enum.filter(fn {_, row} -> is_list(row) end)
+
+
 
   defp furthest_distance_move(nil, board_state, team) do
   end

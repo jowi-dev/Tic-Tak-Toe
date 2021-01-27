@@ -50,9 +50,21 @@ defmodule ComputerTest do
     end
   end
 
-  describe "invert_board/1" do
-    test "inverts the board" do
-      assert %{"0" => [nil, :x, nil]} = generate_board(one: [:x, nil, nil]) |> Computer.invert_board()
+  describe "block_player_win" do
+    test "gets the player team and checks to make sure they can't win" do
+      assert {2, 2} =
+               generate_board(zero: [:x, nil, nil], one: [nil, :x, nil], two: [nil, nil, nil])
+               |> (&Computer.block_player_win(nil, &1, :x)).()
+    end
+  end
+
+  describe "first_move" do
+    test "picks any unclaimed spot on the board for a first move" do
+      assert {col, row} =
+               generate_board(zero: [:x, nil, nil], one: [nil, :x, nil], two: [nil, nil, nil])
+               |> (&Computer.first_move(nil, &1)).()
+
+      assert is_integer(col) and is_integer(row)
     end
   end
 end

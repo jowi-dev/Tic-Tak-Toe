@@ -1,6 +1,6 @@
 defmodule TikTakToeTest do
   use ExUnit.Case
-  doctest TikTakToe
+  #doctest TikTakToe
 
   describe "Team selection" do
     test "the user can select x with X, x" do
