@@ -100,6 +100,13 @@ defmodule ComputerTest do
         generate_board(two: [:x, nil, nil], zero: [:x, nil, :x], x: [{1,1}])
         |> (&Computer.furthest_distance_move(nil, &1, :x)).()
     end
+  end
 
+  describe "closest_intersection_move" do
+    test "picks a space between the two coordinates that shares a line with each" do
+      assert {2,0} =
+        generate_board(zero: [:x, nil, nil], one: [nil, :o, nil], two: [nil, nil, :x], x: [{0,0}, {2,2}])
+        |> (&Computer.closest_intersection_move(nil, &1, :x)).()
+    end
   end
 end

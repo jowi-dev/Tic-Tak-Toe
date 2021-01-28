@@ -112,9 +112,12 @@ defmodule Computer do
 
   def furthest_distance_move(nil, board_state, team) do
     string_team = Atom.to_string(team)
-    [{_col, _row} = move] = Map.get(board_state, string_team)
+    [{_col, _row} = move | _] = moves = Map.get(board_state, string_team)
 
-    get_furthest_coordinate(move, board_state)
+    case Enum.count(moves) do
+      1 -> get_furthest_coordinate(move, board_state)
+      _ -> nil
+    end
   end
 
   def furthest_distance_move(curr_move, _, _), do: curr_move
@@ -150,8 +153,17 @@ defmodule Computer do
 
 
 
-  defp closest_intersection_move(nil, board_state, team) do
+  def closest_intersection_move(nil, board_state, team) do
+    [{col0, row0} | tail] = Map.get(board_state, Atom.to_string(team))
+    [{col1, row1} | _rest] = tail
+
+    cond do
+      Kernel.abs(2 - col0) == col1 and is_nil(get_value(board_state, {col1, row0})) -> {col1, row0}
+      Kernel.abs(1 - col0) == col1 and is_nil(get_value(board_state, {col1, row0})) -> {col1, row0}
+      Kernel.abs(2 - col1) == col0 and is_nil(get_value(board_state, {col0, row1})) -> {col0, row1}
+      Kernel.abs(1 - col1) == col0 and is_nil(get_value(board_state, {col0, row1})) -> {col0, row1}
+    end
   end
 
-  defp closest_intersection_move(curr_move, _, _), do: curr_move
+  def closest_intersection_move(curr_move, _, _), do: curr_move
 end
