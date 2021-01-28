@@ -6,6 +6,8 @@ defmodule ComputerTest do
     |> Map.put("0", Keyword.get(rows, :zero, [nil, nil, nil]))
     |> Map.put("1", Keyword.get(rows, :one, [nil, nil, nil]))
     |> Map.put("2", Keyword.get(rows, :two, [nil, nil, nil]))
+    |> Map.put("x", Keyword.get(rows, :x, []))
+    |> Map.put("o", Keyword.get(rows, :o, []))
   end
 
   test "get_team/1 returns the opposite of the player_team" do
@@ -66,5 +68,38 @@ defmodule ComputerTest do
 
       assert is_integer(col) and is_integer(row)
     end
+  end
+
+  describe "furthest_distance_move" do
+    test "picks the opposite corner if it is available" do
+      assert {2,2} =
+        generate_board(zero: [:x, nil, nil], x: [{0,0}])
+        |> (&Computer.furthest_distance_move(nil, &1, :x)).()
+    end
+
+    test "picks an adjacent space if that space is taken" do
+      assert {2,1} =
+        generate_board(two: [nil, nil, :o], zero: [:x, nil, nil], x: [{0,0}])
+        |> (&Computer.furthest_distance_move(nil, &1, :x)).()
+    end
+
+    test "picks a corner if the middle is taken" do
+      assert {0,0} =
+        generate_board(two: [nil, nil, :o], zero: [nil, nil, nil], x: [{1,1}])
+        |> (&Computer.furthest_distance_move(nil, &1, :x)).()
+
+      assert {2,0} =
+        generate_board(two: [nil, nil, :o], zero: [:x, nil, nil], x: [{1,1}])
+        |> (&Computer.furthest_distance_move(nil, &1, :x)).()
+
+      assert {0,2} =
+        generate_board(two: [nil, nil, :o], zero: [:x, nil, :x], x: [{1,1}])
+        |> (&Computer.furthest_distance_move(nil, &1, :x)).()
+
+      assert {2,2} =
+        generate_board(two: [:x, nil, nil], zero: [:x, nil, :x], x: [{1,1}])
+        |> (&Computer.furthest_distance_move(nil, &1, :x)).()
+    end
+
   end
 end

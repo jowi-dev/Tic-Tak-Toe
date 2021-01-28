@@ -2,7 +2,7 @@ defmodule Display do
   def display_board(board_state) do
     board_state
     |> Map.to_list()
-    |> Enum.filter(fn {_, row} -> is_list(row) end)
+    |> Enum.filter(fn {index, _row} -> index in ["0", "1", "2"] end)
     |> Enum.sort_by(&elem(&1, 0))
     |> Enum.map(fn {_, row} -> display_row(row) end)
     |> Enum.join("\n")

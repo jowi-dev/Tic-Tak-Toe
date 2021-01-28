@@ -6,8 +6,8 @@ defmodule GameState do
     "2" => [nil, nil, nil],
     "1" => [nil, nil, nil],
     "0" => [nil, nil, nil],
-    "x" => 0,
-    "o" => 0
+    "x" => [],
+    "o" => []
   }
 
   def blank_board(), do: @new_board
@@ -68,14 +68,14 @@ defmodule GameState do
     update_board(state, move, team)
   end
 
-  defp update_board(%{board_state: board_state}, {x, y}, team) do
+  defp update_board(%{board_state: board_state}, {x, y} = move, team) do
     updated_row =
       Map.get(board_state, y)
       |> List.replace_at(x, team)
 
     board_state
     |> Map.put(y, updated_row)
-    |> Map.put(team, Map.get(board_state, team) + 1)
+    |> Map.put(Atom.to_string(team), Map.get(board_state, Atom.to_string(team)) ++ [move])
     |> IO.inspect(label: "Updated Board")
   end
 end
